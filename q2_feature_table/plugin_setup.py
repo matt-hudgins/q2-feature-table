@@ -360,6 +360,68 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
+    function=q2_feature_table.filter_samples_feature_table_frequency,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={'min_frequency': Int,
+                'max_frequency': Int,
+                'min_features': Int,
+                'max_features': Int,
+                'metadata': Metadata,
+                'where': Str,
+                'exclude_ids': Bool,
+                'filter_empty_features': Bool},
+    outputs=[('filtered_table', FeatureTable[Frequency])],
+    input_descriptions={
+        'table': 'The feature table from which samples should be filtered.'
+    },
+    parameter_descriptions={
+        'min_frequency': ('The minimum total frequency that a sample must '
+                          'have to be retained.'),
+        'max_frequency': ('The maximum total frequency that a sample can '
+                          'have to be retained. If no value is provided '
+                          'this will default to infinity (i.e., no maximum '
+                          'frequency filter will be applied).'),
+        'min_features': ('The minimum number of features that a sample must '
+                         'have to be retained.'),
+        'max_features': ('The maximum number of features that a sample can '
+                         'have to be retained. If no value is provided '
+                         'this will default to infinity (i.e., no maximum '
+                         'feature filter will be applied).'),
+        'metadata': 'Sample metadata used with `where` parameter when '
+                    'selecting samples to retain, or with `exclude_ids` '
+                    'when selecting samples to discard.',
+        'where': 'SQLite WHERE clause specifying sample metadata criteria '
+                 'that must be met to be included in the filtered feature '
+                 'table. If not provided, all samples in `metadata` that are '
+                 'also in the feature table will be retained.',
+        'exclude_ids': 'If true, the samples selected by `metadata` or '
+                       '`where` parameters will be excluded from the filtered '
+                       'table instead of being retained.',
+        'filter_empty_features': 'If true, features which are not present in '
+                                 'any retained samples are dropped.',
+    },
+    output_descriptions={
+        'filtered_table': 'The resulting feature table filtered by sample.'
+    },
+    name="Filter samples from table",
+    description="Filter samples from table based on frequency and/or "
+                "metadata. Any features with a frequency of zero after sample "
+                "filtering will also be removed. See the filtering tutorial "
+                "on https://docs.qiime2.org for additional details.",
+    examples={
+        'filter_to_subject1': ex.feature_table_filter_samples_to_subject1,
+        'filter_to_skin': ex.feature_table_filter_samples_to_skin,
+        'filter_to_subject1_gut':
+        ex.feature_table_filter_samples_to_subject1_gut,
+        'filter_to_gut_or_abx': ex.feature_table_filter_samples_to_gut_or_abx,
+        'filter_to_subject1_not_gut':
+        ex.feature_table_filter_samples_to_subject1_not_gut,
+        'filter_min_features': ex.feature_table_filter_samples_min_features,
+        'filter_min_frequency': ex.feature_table_filter_samples_min_frequency}
+)
+
+
+plugin.methods.register_function(
     function=q2_feature_table.filter_features_conditionally,
     inputs={'table': FeatureTable[T1]},
     parameters={'prevalence': Float % Range(0, 1),
